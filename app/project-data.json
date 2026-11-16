@@ -1,0 +1,52 @@
+{
+  "projects": [
+    {
+      "name": "Octo Docs Refresh",
+      "owner": "Mona",
+      "status": "On track",
+      "recentActivity": "Merged the getting-started guide rewrite",
+      "priority": "High",
+      "summary": "Modernize contributor docs so new folks can ship their first PR in a day."
+    },
+    {
+      "name": "Pipeline Speedup",
+      "owner": "Hubot",
+      "status": "At risk",
+      "recentActivity": "CI cache misses traced to a runner image change",
+      "priority": "High",
+      "summary": "Cut median CI time from 14 minutes to under 6."
+    },
+    {
+      "name": "Accessibility Audit",
+      "owner": "Ada",
+      "status": "In review",
+      "recentActivity": "Opened 12 issues from the keyboard-navigation pass",
+      "priority": "Medium",
+      "summary": "Bring every core page to WCAG 2.2 AA."
+    },
+    {
+      "name": "Design System Tokens",
+      "owner": "Grace",
+      "status": "On track",
+      "recentActivity": "Published color and spacing tokens v0.3",
+      "priority": "Medium",
+      "summary": "One source of truth for colors, spacing, and type across apps."
+    },
+    {
+      "name": "Community Showcase",
+      "owner": "Linus",
+      "status": "Blocked",
+      "recentActivity": "Waiting on legal review of contributor photo consent",
+      "priority": "Low",
+      "summary": "Monthly spotlight of outstanding community contributions."
+    },
+    {
+      "name": "Release Notes Bot",
+      "owner": "Octocat",
+      "status": "Done",
+      "recentActivity": "Shipped automated changelog drafts for every release",
+      "priority": "Low",
+      "summary": "Draft release notes automatically from merged pull requests."
+    }
+  ]
+}

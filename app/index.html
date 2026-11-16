@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Project Pulse</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="masthead">
+      <div class="masthead-inner">
+        <p class="eyebrow">Mona's team</p>
+        <h1>Project Pulse</h1>
+        <p class="lede">Who owns what, how it's going, and what changed recently.</p>
+      </div>
+      <dl class="summary" id="summary" aria-label="Project summary"></dl>
+    </header>
+
+    <main class="dashboard" id="dashboard" aria-labelledby="projects-heading">
+      <h2 id="projects-heading" class="visually-hidden">Projects</h2>
+      <p class="status-message" id="status-message" role="status">Loading projects…</p>
+      <ul class="project-grid" id="project-grid"></ul>
+    </main>
+
+    <footer class="footer">Data from <code>project-data.json</code></footer>
+
+    <script>
+      const DATA_URL = "project-data.json";
+      const grid = document.getElementById("project-grid");
+      const message = document.getElementById("status-message");
+      const summary = document.getElementById("summary");
+
+      const slug = (value) =>
+        String(value || "unknown").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+      function el(tag, className, text) {
+        const node = document.createElement(tag);
+        if (className) node.className = className;
+        if (text !== undefined) node.textContent = text;
+        return node;
+      }
+
+      function field(label, value, className) {
+        const wrap = el("div", "field");
+        wrap.append(el("dt", "field-label", label), el("dd", className || "field-value", value || "Unknown"));
+        return wrap;
+      }
+
+      function renderCard(project) {
+        const card = el("li", `project-card priority-${slug(project.priority)}`);
+        card.tabIndex = 0;
+
+        const top = el("div", "card-top");
+        top.append(el("h3", "project-name", project.name || "Untitled project"));
+        top.append(el("span", `badge status status-${slug(project.status)}`, project.status || "Unknown"));
+        card.append(top);
+
+        if (project.summary) card.append(el("p", "project-summary", project.summary));
+
+        const details = el("dl", "details");
+        details.append(
+          field("Owner", project.owner),
+          field("Priority", project.priority, `badge priority priority-badge-${slug(project.priority)}`),
+          field("Recent activity", project.recentActivity, "field-value recent-activity")
+        );
+        card.append(details);
+        return card;
+      }
+
+      function renderSummary(projects) {
+        const count = (pred) => projects.filter(pred).length;
+        const stats = [
+          ["Projects", projects.length],
+          ["High priority", count((p) => slug(p.priority) === "high")],
+          ["At risk or blocked", count((p) => ["at-risk", "blocked"].includes(slug(p.status)))],
+        ];
+        summary.replaceChildren(
+          ...stats.map(([label, value]) => {
+            const item = el("div", "stat");
+            item.append(el("dt", "stat-label", label), el("dd", "stat-value", String(value)));
+            return item;
+          })
+        );
+      }
+
+      async function load() {
+        try {
+          const response = await fetch(DATA_URL, { cache: "no-store" });
+          if (!response.ok) throw new Error(`HTTP ${response.status} loading ${DATA_URL}`);
+          const data = await response.json();
+          const projects = Array.isArray(data && data.projects) ? data.projects : [];
+          renderSummary(projects);
+          if (projects.length === 0) {
+            message.textContent = "No projects yet. Add some to project-data.json.";
+            return;
+          }
+          grid.replaceChildren(...projects.map(renderCard));
+          message.textContent = "";
+          message.hidden = true;
+        } catch (error) {
+          console.error(error);
+          message.textContent =
+            "Couldn't load project data. Run the \"Run Project Pulse Dashboard\" launch configuration (or python3 -m http.server in app/) instead of opening the file directly.";
+          message.classList.add("error");
+        }
+      }
+
+      load();
+    </script>
+  </body>
+</html>
